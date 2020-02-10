@@ -1,15 +1,15 @@
-import React from "react"
-import { NavLink as RouterNavLink } from "react-router-dom"
+import React from "react";
+import { NavLink as RouterNavLink } from "react-router-dom";
 
-import { useAuth0 } from "../react-auth0-spa"
+import { useAuth0 } from "../react-auth0-spa";
 
 const NavBar = () => {
-  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
   const logoutWithRedirect = () =>
     logout({
       returnTo: window.location.origin
-    })
+    });
 
   return (
     <div className="nav-container">
@@ -33,7 +33,7 @@ const NavBar = () => {
         </ul>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;
