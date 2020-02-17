@@ -8,6 +8,7 @@
 1) Install [node.js](https://nodejs.org/en/download/) on your machine
 2) Optional, but recommended: install yarn by running `npm install --global yarn`
 3) Install dependencies
+
 By NPM
 ```
 npm install
@@ -18,6 +19,7 @@ yarn
 ```
 4) Update `src/auth_config.json` with your variables
 5) Run the application
+
 By npm
 ```
 npm start
