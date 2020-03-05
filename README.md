@@ -6,25 +6,26 @@
 
 # Getting started
 1) Install [node.js](https://nodejs.org/en/download/) on your machine
-2) Optional, but recommended: install yarn by running `npm install --global yarn`
-3) Install dependencies
+2) Optional, but recommended: install yarn in command line `npm install --global yarn` or [yarn install](https://classic.yarnpkg.com/en/docs/install)
+3) Open system terminal in project folder (windows - ctrl + R and type cmd, use `cd` to change directories from your root folder to project folder)
+4) Install dependencies (run one of these commands in terminal), 
 
-By NPM
+If you didn't installed yarn
 ```
 npm install
 ```
-Or by yarn
+If you installed yarn
 ```
 yarn
 ```
-4) Update `src/auth_config.json` with your variables
-5) Run the application
+5) Update `src/auth_config.json` with your variables
+6) Run the application (run one of these commands in terminal)
 
-By npm
+If you didn't installed yarn
 ```
 npm start
 ```
-Or by yarn
+If you installed yarn
 ```
 yarn start
 ```
