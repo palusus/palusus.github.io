@@ -56,7 +56,7 @@ const Home = () => {
   };
   return (
     <Fragment>
-      <h1>There will not be dragons</h1>
+      <h1>There will not be dragonz</h1>
 
       {!user && <h2>Log in to show some data</h2>}
       {koronaData !== {} && console.log("koronky jsou", koronaData)}
