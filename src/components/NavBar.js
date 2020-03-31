@@ -13,11 +13,11 @@ const NavBar = () => {
 
   return (
     <div className="nav-container">
-      {!isAuthenticated && (
-        <button id="qsLoginBtn" type="button" onClick={() => loginWithRedirect({})}>
-          Log in
-        </button>
-      )}
+      {/*{!isAuthenticated && (*/}
+      {/*  <button id="qsLoginBtn" type="button" onClick={() => loginWithRedirect({})}>*/}
+      {/*    Log in*/}
+      {/*  </button>*/}
+      {/*)}*/}
       {isAuthenticated && (
         <ul>
           <li>
