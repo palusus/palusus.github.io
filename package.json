@@ -2,13 +2,15 @@
   "name": "auth0-react-01-login",
   "version": "0.1.0",
   "private": true,
-  "homepage" : "http://palusus.github.io/coronavirus",
+  "homepage": "https://palusus.github.io/coronavirus",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint ./"
+    "lint": "eslint ./",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.0.2",
@@ -22,6 +24,7 @@
   "devDependencies": {
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-prettier": "^3.1.2",
+    "gh-pages": "^2.2.0",
     "prettier": "^1.19.1"
   },
   "eslintConfig": {
