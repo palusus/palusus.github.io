@@ -1,16 +1,19 @@
-import React from "react";
-import { Table, TableHeader, TableBody } from "@patternfly/react-table";
+import React, { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars
+import { Table, TableHeader, TableBody, sortable, SortByDirection, wrappable } from "@patternfly/react-table";
 
 const createNumbers = (numbers) => [...Array(31)].map((_value, index) => (numbers ? numbers[index + 1] : index + 1));
 
 const xd = ["rok", "měsíc", 0, 0, 0, 0, ...createNumbers()];
 
-function createData(shit) {
-  return xd.map((whoa) => {
-    shit.get(whoa);
-  });
-}
-const headerTemplate = ["Year", "Měsíc", ...createNumbers()];
+// function createData(shit) {
+//   return xd.map((whoa) => {
+//     shit.get(whoa);
+//   });
+// }
+const headerTemplate = ["Country", "confirmed", "koronarip"];
+
+
 
 // eslint-disable-next-line no-unused-vars
 class Tabulkold extends React.Component {
@@ -18,14 +21,25 @@ class Tabulkold extends React.Component {
     console.log("krok2", data);
     super(props);
     this.state = {
-      columns: headerTemplate,
+      columns: headerTemplate.map((x) => {
+        return { title: x, transforms: [sortable, wrappable] };
+      }),
       // eslint-disable-next-line react/prop-types
-      rows: props.data
-      //.map((data) => {
-      //console.log(createData(data));
-      //return createData(data);
-      //}) //props.data.map()
+      rows: props.data,
+      sortBy: {}
     };
+    this.onSort = this.onSort.bind(this);
+  }
+
+  onSort(_event, index, direction) {
+    const sortedRows = this.state.rows.sort((a, b) => (a[index] < b[index] ? -1 : a[index] > b[index] ? 1 : 0));
+    this.setState({
+      sortBy: {
+        index,
+        direction
+      },
+      rows: direction === SortByDirection.asc ? sortedRows : sortedRows.reverse()
+    });
   }
 
   render() {
@@ -41,14 +55,27 @@ class Tabulkold extends React.Component {
   }
 }
 
-const Tabulka = ({ rows }) => {
-  const meow = rows.map((row) => {
-    return [row["rok"], row["měsíc"], ...Object.values(row).slice(0, 31)];
-    //return [1,2,3,4];
-  });
-  console.log("whoa", meow);
+const Tabulka = ({ rows, onSort }) => {
+  // console.log("coto", rady);
+  // const [rows, setRows] = useState(koronaDedToday(data));
+  // useEffect(() => setRows(koronaDedToday(data)), [data]);
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.data !== data) {
+  //     setRows(koronaDedToday(data))
+  //   }
+  // }
+  console.log("WTF", rows);
   return (
-    <Table aria-label="Simple Table" cells={headerTemplate} rows={meow}>
+    <Table
+      aria-label="Sortable coronavirus table"
+      cells={headerTemplate.map((x) => {
+        return { title: x, transforms: [sortable, wrappable] };
+      })}
+      // cells={headerTemplate}
+      rows={rows}
+      // onSort={sortFunc}
+      onSort={onSort}
+    >
       <TableHeader />
       <TableBody />
     </Table>
