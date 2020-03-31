@@ -11,7 +11,7 @@ const xd = ["rok", "měsíc", 0, 0, 0, 0, ...createNumbers()];
 //     shit.get(whoa);
 //   });
 // }
-const headerTemplate = ["Country", "confirmed", "koronarip"];
+const headerTemplate = ["Country", "confirmed today", "confirmed before week", "~weekly", "~weekly%", "koronarip"];
 
 
 

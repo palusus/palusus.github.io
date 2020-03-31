@@ -9,8 +9,18 @@ const koronaDedToday = (koronky) => {
   return !koronky
     ? []
     : Object.keys(koronky).map((country, values) => {
-        const vals = koronky[country].slice(-1)[0];
-        return [country, vals["confirmed"], vals["deaths"]];
+        const today = koronky[country].slice(-2)[0];
+        const beforeWeek = koronky[country].slice(-9)[0];
+        const weekChange = 100 * today["confirmed"]/beforeWeek["confirmed"] - 100;
+        const weekChangeText = /*(weekChange > 0 ? "+" : "")*/ Math.round(weekChange);
+        return [
+          country,
+          today["confirmed"],
+          beforeWeek["confirmed"],
+          today["confirmed"] - beforeWeek["confirmed"],
+          beforeWeek["confirmed"] < 20 ? '' : weekChangeText,
+          today["deaths"],
+        ]
       });
 };
 const Home = () => {
@@ -19,7 +29,7 @@ const Home = () => {
   const [index, setIndex] = useState(1);
   const [page, setPage] = useState(1);
   const [items, setItems] = useState(10);
-  const [direction, setDirection] = useState(1);
+  const [direction, setDirection] = useState(-1);
   const [koronaData, setKoronaData] = useState({});
   async function fetchData() {
     const res = await fetch("https://pomber.github.io/covid19/timeseries.json");
@@ -72,6 +82,7 @@ const Home = () => {
           }
         </pre>
       )}
+      {user && koronaData !== {} && <Pagination itemCount={Object.keys(koronaData).length} perPage={items} page={page} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />}
     </Fragment>
   );
 };
