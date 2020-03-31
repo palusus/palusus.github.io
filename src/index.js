@@ -1,5 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import "@patternfly/react-core/dist/styles/base.css";
+
+import "./fonts.css";
 import "./index.css";
 import App from "./App";
 import { Auth0Provider } from "./react-auth0-spa";

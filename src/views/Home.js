@@ -1,20 +1,23 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useAuth0 } from "../react-auth0-spa";
 import Api from "../utils/api";
+import Tabulka from "../components/Tabulka";
 
 const Home = () => {
   const { loading, user } = useAuth0();
   const [data, setData] = useState([]);
   useEffect(() => {
     if (!loading && user) {
-      Api.get("rest/wind-speed").then((data) => setData(data));
+      Api.get("rest/temp-avg").then((dat) => setData(dat));
+      // eslint-disable-next-line
+      console.log(data);
     }
   }, [loading, user]);
   return (
     <Fragment>
-      <h1>There will be dragons</h1>
+      <h1>There will not be dragons</h1>
       {!user && <h2>Log in to show some data</h2>}
-      {user && <pre>{JSON.stringify(data, null, 2)}</pre>}
+      {user && <pre>{<Tabulka rows={data} />}</pre>}
     </Fragment>
   );
 };
