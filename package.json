@@ -2,14 +2,14 @@
   "name": "auth0-react-01-login",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://palusus.github.io/coronavirus",
+  "homepage": "https://palusus.github.io/coronavirus/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint ./",
-    "predeploy": "yarn build",
+    "predeploy": "yarn run build",
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
