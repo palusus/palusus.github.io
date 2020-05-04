@@ -3,7 +3,7 @@ import { Table, TableHeader, TableBody, sortable, SortByDirection, wrappable } f
 
 const headerTemplate = ["Country", "confirmed today", "confirmed before week", "~weekly", "~weekly%", "koronarip"];
 
-const Tabulka = ({ rows, onSort }) => {
+const Tabulka = ({ rows, onSort, ...other }) => {
   return (
     <Table
       aria-label="Sortable coronavirus table"
@@ -12,6 +12,8 @@ const Tabulka = ({ rows, onSort }) => {
       })}
       rows={rows}
       onSort={onSort}
+      style={{float:"right"}}
+        {...other}
     >
       <TableHeader />
       <TableBody />

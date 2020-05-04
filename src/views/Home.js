@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useAuth0 } from "../react-auth0-spa";
 import Tabulka from "../components/Tabulka";
-import { Pagination } from "@patternfly/react-core";
+import CoronaChart from "../components/CoronaChart";
+import { Pagination, TextInput, Switch } from "@patternfly/react-core";
 const koronaDedToday = (koronky) => {
-  console.log("koronaded", koronky);
   return !koronky
     ? []
     : Object.keys(koronky).map((country, values) => {
@@ -28,6 +28,14 @@ const Home = () => {
   const [items, setItems] = useState(10);
   const [direction, setDirection] = useState(-1);
   const [koronaData, setKoronaData] = useState({});
+  const [countryFilter, setCountryFilter] = useState("");
+  const [tableMode, setTableMode] = useState(true);
+  const [selectedCountries, setSelectedCountries] = useState(["US", "Czechia"]);
+
+  const toggleTableMode = () => {
+    setTableMode(!tableMode);
+  };
+
   async function fetchData() {
     const res = await fetch("https://pomber.github.io/covid19/timeseries.json");
     console.log("spadne", res);
@@ -56,24 +64,39 @@ const Home = () => {
   };
   return (
     <Fragment>
-      <h1>There will not be dragons</h1>
-
-      {koronaData !== {} && console.log("koronky jsou", koronaData)}
+      <h1>The serious coronavirus app</h1>
+      {koronaData !== {} && console.log("koronky jsou", koronaDedToday(koronaData))}
       {koronaData !== {} && (
         <Pagination itemCount={Object.keys(koronaData).length} perPage={items} page={page} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
       )}
-      {koronaData !== {} && (
-        <pre>
-          {
-            <Tabulka
-              rows={koronaDedToday(koronaData)
-                .sort(sortFunc)
-                .slice(page * items - items, page * items)}
-              onSort={onSort}
-            />
-          }
-        </pre>
-      )}
+      <Switch id="tableSwitch" label={"Table mode"} labelOff="Graph mode" isChecked={tableMode} onChange={toggleTableMode} />
+      <div style={{ marginLeft: "30%" }}>
+        <TextInput type="text" onChange={setCountryFilter} placeholder="search country..." aria-label="search country" />
+      </div>
+      <div style={{ float: "left", width: "30%" }}>
+        <img src="https://www.globsec.org/wp-content/uploads/2020/04/Corona-virus-image.jpg" alt="" style={{ float: "left" }} />
+        <img
+          src="https://i.redd.it/q4dgjo77y6n41.jpg"
+          alt='When you find out your daily lifestyle is called "quarantine"'
+          style={{ float: "left" }}
+        />
+      </div>
+      <div style={{ float: "right", width: "70%" }}>
+        {koronaData !== {} && tableMode && (
+          <pre>
+            {
+              <Tabulka
+                rows={koronaDedToday(koronaData)
+                  .filter((x) => x[0].includes(countryFilter))
+                  .sort(sortFunc)
+                  .slice(page * items - items, page * items)}
+                onSort={onSort}
+              />
+            }
+          </pre>
+        )}
+        {koronaData !== {} && !tableMode && <CoronaChart koronky={Object.keys(koronaData).filter((x) => selectedCountries.includes(x)).map((country)=> {return [country, koronaData[country]]})} />}
+      </div>
       {user && koronaData !== {} && (
         <Pagination itemCount={Object.keys(koronaData).length} perPage={items} page={page} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
       )}
