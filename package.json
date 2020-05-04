@@ -14,12 +14,14 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.0.2",
+    "@patternfly/react-charts": "^5.3.19",
     "@patternfly/react-table": "^2.28.10",
     "axios": "^0.19.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "surge": "^0.21.3"
   },
   "devDependencies": {
     "eslint-config-prettier": "^6.9.0",
