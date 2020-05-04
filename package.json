@@ -5,7 +5,7 @@
   "homepage": "https://palusus.github.io/coronavirus/",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build; copyfiles build/index.html build/200.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint ./",
@@ -17,6 +17,7 @@
     "@patternfly/react-charts": "^5.3.19",
     "@patternfly/react-table": "^2.28.10",
     "axios": "^0.19.0",
+    "copyfiles": "^2.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
