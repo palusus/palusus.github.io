@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useAuth0 } from "../react-auth0-spa";
 import Tabulka from "../components/Tabulka";
 import CoronaChart from "../components/CoronaChart";
-import { Pagination, TextInput, Switch } from "@patternfly/react-core";
+import { Pagination, TextInput} from "@patternfly/react-core";
 const koronaDedToday = (koronky) => {
   return !koronky
     ? []
