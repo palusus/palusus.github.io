@@ -2,7 +2,7 @@
   "name": "auth0-react-01-login",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://palusus.github.io/coronavirus/",
+  "homepage": "https://pv-278-2020-patrik-pavel.surge.sh/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build; copyfiles build/index.html build/200.html",
