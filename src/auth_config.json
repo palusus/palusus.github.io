@@ -1,6 +1,6 @@
 {
-  "domain": "",
-  "clientId": "",
-  "apiKey": "",
-  "apiBase": ""
+  "domain": "dev-8ihcso-1.auth0.com",
+  "clientId": "mlvJbMAWJigD9I6jrAKDc5aeL5G7Ccyx",
+  "apiKey": "5dc7d91d64e7774913b6eaf8",
+  "apiBase": "https://munitest-16ae.restdb.io"
 }

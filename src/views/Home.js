@@ -22,7 +22,7 @@ const koronaDedToday = (koronky) => {
       });
 };
 const Home = () => {
-  // const { loading, user } = useAuth0();
+  const { loading, user } = useAuth0();
   const [index, setIndex] = useState(1);
   const [page, setPage] = useState(1);
   const [items, setItems] = useState(10);
@@ -62,8 +62,8 @@ const Home = () => {
     console.log("spadne", res);
     res.json().then((res) => setKoronaData(res));
   }
-  const loading = false;
-  const user = false;
+  // const loading = false;
+  // const user = false;
   useEffect(() => {
     if (!loading) {
       fetchData();
@@ -83,23 +83,28 @@ const Home = () => {
   const onSetPerPage = (_event, perPage) => {
     setItems(perPage);
   };
-    const rady = koronaDedToday(koronaData)
-        .filter((x) => x[0].includes(countryFilter))
+    const cele = koronaDedToday(koronaData)
+        .filter((x) => x[0].toLowerCase().includes(countryFilter.toLowerCase()))
         .sort(sortFunc)
-        .slice(page * items - items, page * items);
-
-
+    const paga = cele.length < page * items - items ? 1 : page
+    const rady = cele.slice(paga * items - items, paga * items);
     return (
     <Fragment>
-      <h1>The serious coronavirus app</h1>
+      <div style={{ float: "left", width: "30%"}}>
+        <Switch id="tableSwitch" label={"Table mode"} labelOff="Graph mode" isChecked={tableMode} onChange={toggleTableMode} />
+      </div>
       {koronaData !== {} && console.log("koronky jsou", koronaDedToday(koronaData))}
       {koronaData !== {} && (
-        <Pagination itemCount={Object.keys(koronaData).length} perPage={items} page={page} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
+          <div style={{float : "right"}}>
+        <Pagination itemCount={Object.keys(cele).length} perPage={items} page={paga} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
+        </div>
       )}
-      <Switch id="tableSwitch" label={"Table mode"} labelOff="Graph mode" isChecked={tableMode} onChange={toggleTableMode} />
-      <div style={{ marginLeft: "30%" }}>
+
+      <div style={{ float:"left", width:"auto"}}>
         <TextInput type="text" onChange={setCountryFilter} placeholder="search country..." aria-label="search country" />
       </div>
+        <br />
+      <br />
       <div style={{ float: "left", width: "30%" }}>
         <img src="https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_960_720.jpg" alt="" style={{ float: "left" }} />
         <img
@@ -122,9 +127,6 @@ const Home = () => {
         )}
 
         {koronaData !== {} && !tableMode && <div style={{ float: "right", width: "70%" , height: "70%"}}><CoronaChart koronky={Object.keys(koronaData).filter((x) => selectedCountries.has(x)).map((country)=> {console.log(koronaData[country]); return [country, koronaData[country]]})} /></div>}
-      {user && koronaData !== {} && (
-        <Pagination itemCount={Object.keys(koronaData).length} perPage={items} page={page} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
-      )}
     </Fragment>
   );
 };
