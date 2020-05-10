@@ -3,7 +3,6 @@ import {ApplicationLauncher, ApplicationLauncherItem, Avatar, DropdownPosition, 
 import { NavLink as RouterNavLink } from "react-router-dom";
 
 import { useAuth0 } from "../react-auth0-spa";
-
 const NavBar = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [hover, setHover] = useState(false);
@@ -42,8 +41,6 @@ const NavBar = () => {
           </div>
         </ul>
       )}
-      <br />
-        <br />
     </div>
   );
 };

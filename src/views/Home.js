@@ -9,15 +9,19 @@ const koronaDedToday = (koronky) => {
     : Object.keys(koronky).map((country, values) => {
         const today = koronky[country].slice(-2)[0];
         const beforeWeek = koronky[country].slice(-9)[0];
-        const weekChange = (100 * today["confirmed"]) / beforeWeek["confirmed"] - 100;
-        const weekChangeText = /*(weekChange > 0 ? "+" : "")*/ Math.round(weekChange);
+        const terminated = (x) => x["deaths"] + x["recovered"];
+        const active = (x) => x["confirmed"] - terminated(x);
+        const weekChange = (10000 * active(today)) / active(beforeWeek) - 10000;
+        const weekChangeText = /*(weekChange > 0 ? "+" : "")*/ Math.round(weekChange) / 100;
         return [
           country,
           today["confirmed"],
-          beforeWeek["confirmed"],
+          active(today),
           today["confirmed"] - beforeWeek["confirmed"],
-          beforeWeek["confirmed"] < 50 ? "" : weekChangeText,
-          today["deaths"]
+          beforeWeek["confirmed"] < 30 ? "" : weekChangeText,
+          today["recovered"],
+          today["deaths"],
+          Math.round((10000 * terminated(today)) / today["confirmed"]) / 100
         ];
       });
 };
@@ -29,13 +33,23 @@ const Home = () => {
   const [direction, setDirection] = useState(-1);
   const [koronaData, setKoronaData] = useState({});
   const [countryFilter, setCountryFilter] = useState("");
+  const [filter, setFilter] = useState({});
+  const [x, d] = useState(false);
   const [tableMode, setTableMode] = useState(true);
-  const [selectedCountries, setSelectedCountries] = useState(new Set(["Philippines", "Czechia"]));//["Philippines", "Czechia"]); //set
+  const [selectedCountries, setSelectedCountries] = useState(new Set());//["Philippines", "Czechia"])); //["Philippines", "Czechia"]); //set
 
   const select = (country) => {
     let x = new Set(selectedCountries);
     x.add(country);
     setSelectedCountries(x);
+  };
+
+  useEffect(() => {}, [filter]);
+  const addFilter = (index, min, max) => {
+    let wow = filter;
+    wow[index] = [min, max];
+    setFilter(wow);
+    d(!x);
   };
 
   const unselect = (country) => {
@@ -74,7 +88,7 @@ const Home = () => {
     setIndex(index);
   };
   const sortFunc = (a, b) => {
-    return direction * (b[index-1] < a[index-1] ? 1 : -1);
+    return direction * (b[index - 1] < a[index - 1] ? 1 : -1);
   };
   const onSetPage = (_event, page) => {
     setPage(page);
@@ -83,27 +97,42 @@ const Home = () => {
   const onSetPerPage = (_event, perPage) => {
     setItems(perPage);
   };
-    const cele = koronaDedToday(koronaData)
-        .filter((x) => x[0].toLowerCase().includes(countryFilter.toLowerCase()))
-        .sort(sortFunc)
-    const paga = cele.length < page * items - items ? 1 : page
-    const rady = cele.slice(paga * items - items, paga * items);
-    return (
+
+  const applyFilters = (x) => {
+    let result = true;
+    Object.keys(filter).map((lol) => {
+      const exists = (i) => !(filter[lol][i] === undefined || filter[lol][i] === "");
+      [0, 1].map((i) => {
+        if (exists(i) && (i?filter[lol][i] <= x[lol]:filter[lol][i]>= x[lol])) {
+          result = false;
+        }
+      });
+    });
+    return result;
+  };
+
+  const cele = koronaDedToday(koronaData)
+    .filter((x) => x[0].toLowerCase().includes(countryFilter.toLowerCase()))
+    .filter(applyFilters)
+    .sort(sortFunc);
+  const paga = cele.length < page * items - items ? 1 : page;
+  const rady = cele.slice(paga * items - items, paga * items);
+  return (
     <Fragment>
-      <div style={{ float: "left", width: "30%"}}>
+      <div style={{ float: "left", width: "30%" }}>
         <Switch id="tableSwitch" label={"Table mode"} labelOff="Graph mode" isChecked={tableMode} onChange={toggleTableMode} />
       </div>
       {koronaData !== {} && console.log("koronky jsou", koronaDedToday(koronaData))}
       {koronaData !== {} && (
-          <div style={{float : "right"}}>
-        <Pagination itemCount={Object.keys(cele).length} perPage={items} page={paga} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
+        <div style={{ float: "right" }}>
+          <Pagination itemCount={Object.keys(cele).length} perPage={items} page={paga} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
         </div>
       )}
 
-      <div style={{ float:"left", width:"auto"}}>
+      <div style={{ float: "bottom", width: "auto" }}>
         <TextInput type="text" onChange={setCountryFilter} placeholder="search country..." aria-label="search country" />
       </div>
-        <br />
+      <br />
       <br />
       <div style={{ float: "left", width: "30%" }}>
         <img src="https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_960_720.jpg" alt="" style={{ float: "left" }} />
@@ -113,20 +142,24 @@ const Home = () => {
           style={{ float: "left" }}
         />
       </div>
-        {koronaData !== {} && tableMode && (
-            <div style={{ float: "right", width: "70%" }}>
-            {
-              <Tabulka
-                rows={rady}
-                onSort={onSort}
-                onSelect={onSelect}
-                selected={selectedCountries}
-              />
-            }
-            </div>
-        )}
+      {koronaData !== {} && tableMode && (
+        <div style={{ float: "right", width: "70%" }}>
+          {<Tabulka rows={rady} onSort={onSort} onSelect={onSelect} selected={selectedCountries} addFilter={addFilter} filter={filter} />}
+        </div>
+      )}
 
-        {koronaData !== {} && !tableMode && <div style={{ float: "right", width: "70%" , height: "70%"}}><CoronaChart koronky={Object.keys(koronaData).filter((x) => selectedCountries.has(x)).map((country)=> {console.log(koronaData[country]); return [country, koronaData[country]]})} /></div>}
+      {koronaData !== {} && !tableMode && (
+        <div style={{ float: "right", width: "70%", height: "70%" }}>
+          <CoronaChart
+            koronky={Object.keys(koronaData)
+              .filter((x) => selectedCountries.has(x))
+              .map((country) => {
+                console.log(koronaData[country]);
+                return [country, koronaData[country]];
+              })}
+          />
+        </div>
+      )}
     </Fragment>
   );
 };

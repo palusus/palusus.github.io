@@ -8,7 +8,10 @@ import {
     ChartVoronoiContainer
 } from "@patternfly/react-charts";
 
+import { Alert } from "@patternfly/react-core";
+
 const CoronaChart = ({ koronky }) =>
+    koronky.length > 0 ?
     <Chart
       ariaDesc="Average number of pets"
       ariaTitle="Line chart example"
@@ -44,6 +47,9 @@ const CoronaChart = ({ koronky }) =>
         />})}
       </ChartGroup>
       }
-    </Chart>;
+    </Chart>
+    : <div>
+            <Alert variant="info" isInline title="No country is selected"/>
+        </div>
 
 export default CoronaChart;

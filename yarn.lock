@@ -1314,10 +1314,29 @@
     react-dropzone "9.0.0"
     tippy.js "5.1.2"
 
+"@patternfly/react-core@^3.153.13":
+  version "3.153.13"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.153.13.tgz#f05dead48f3fff7dae156798c6a5b4c244d77c9d"
+  integrity sha512-OyssAlsdsHWXRuKXvkcagG8PcplpE02FSLClON+407Fzhj4t0BLGWECI8RQwZ0Tapr+qVXikKQRukM5MY9zIqg==
+  dependencies:
+    "@patternfly/react-icons" "^3.15.16"
+    "@patternfly/react-styles" "^3.7.13"
+    "@patternfly/react-tokens" "^2.8.13"
+    focus-trap "4.0.2"
+    react-dropzone "9.0.0"
+    tippy.js "5.1.2"
+
 "@patternfly/react-icons@^3.15.11":
   version "3.15.13"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.15.13.tgz#845f9f98684b718810b115fcc32983ae94cc5201"
   integrity sha512-uEzKC9NwpZamCW00mZIxZ5AslFPXVZ+4ThBUOTYSliZUS1DwOKe0549qrAP1vCpz9vCeTR4jyOXBe/kS9IoXpg==
+  dependencies:
+    "@fortawesome/free-brands-svg-icons" "^5.8.1"
+
+"@patternfly/react-icons@^3.15.16":
+  version "3.15.16"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.15.16.tgz#dedb37e4f37ec8fd787abc1f1a4a9321a5047899"
+  integrity sha512-YOBED8rhkbBEHTQpjEns/OjgD1gDsW8e6rw6u0H0y6S9YwrmZXhgq/aiu2OG0ftmKWOvYvrrDgmNBkkWpEWlEA==
   dependencies:
     "@fortawesome/free-brands-svg-icons" "^5.8.1"
 
@@ -4675,6 +4694,14 @@ focus-trap-react@^4.0.1:
   integrity sha512-UUZKVEn5cFbF6yUnW7lbXNW0iqN617ShSqYKgxctUvWw1wuylLtyVmC0RmPQNnJ/U+zoKc/djb0tZMs0uN/0QQ==
   dependencies:
     focus-trap "^3.0.0"
+
+focus-trap@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/focus-trap/-/focus-trap-4.0.2.tgz#4ee2b96547c9ea0e4252a2d4b2cca68944194663"
+  integrity sha512-HtLjfAK7Hp2qbBtLS6wEznID1mPT+48ZnP2nkHzgjpL4kroYHg0CdqJ5cTXk+UO5znAxF5fRUkhdyfgrhh8Lzw==
+  dependencies:
+    tabbable "^3.1.2"
+    xtend "^4.0.1"
 
 focus-trap@^3.0.0:
   version "3.0.0"
@@ -10139,7 +10166,7 @@ symbol-tree@^3.2.2:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
-tabbable@^3.1.0:
+tabbable@^3.1.0, tabbable@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-3.1.2.tgz#f2d16cccd01f400e38635c7181adfe0ad965a4a2"
   integrity sha512-wjB6puVXTYO0BSFtCmWQubA/KIn7Xvajw0x0l6eJUudMG/EAiJvIUnyNX6xO4NpGrJ16lbD0eUseB9WxW0vlpQ==
