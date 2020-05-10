@@ -30,8 +30,29 @@ const Home = () => {
   const [koronaData, setKoronaData] = useState({});
   const [countryFilter, setCountryFilter] = useState("");
   const [tableMode, setTableMode] = useState(true);
-  const [selectedCountries, setSelectedCountries] = useState(["US", "Czechia"]);
+  const [selectedCountries, setSelectedCountries] = useState(new Set(["Philippines", "Czechia"]));//["Philippines", "Czechia"]); //set
 
+  const select = (country) => {
+    let x = new Set(selectedCountries);
+    x.add(country);
+    setSelectedCountries(x);
+  };
+
+  const unselect = (country) => {
+    let x = new Set(selectedCountries);
+    x.delete(country);
+    setSelectedCountries(x);
+  };
+
+  const onSelect = (event, isSelected, rowID) => {
+    const modify = isSelected ? select : unselect;
+    if (rowID === -1) {
+      return;
+    }
+    const stat = rady[rowID][0];
+    modify(stat);
+    rady[rowID].selected = isSelected;
+  };
   const toggleTableMode = () => {
     setTableMode(!tableMode);
   };
@@ -53,7 +74,7 @@ const Home = () => {
     setIndex(index);
   };
   const sortFunc = (a, b) => {
-    return direction * (b[index] < a[index] ? 1 : -1);
+    return direction * (b[index-1] < a[index-1] ? 1 : -1);
   };
   const onSetPage = (_event, page) => {
     setPage(page);
@@ -62,7 +83,13 @@ const Home = () => {
   const onSetPerPage = (_event, perPage) => {
     setItems(perPage);
   };
-  return (
+    const rady = koronaDedToday(koronaData)
+        .filter((x) => x[0].includes(countryFilter))
+        .sort(sortFunc)
+        .slice(page * items - items, page * items);
+
+
+    return (
     <Fragment>
       <h1>The serious coronavirus app</h1>
       {koronaData !== {} && console.log("koronky jsou", koronaDedToday(koronaData))}
@@ -74,29 +101,27 @@ const Home = () => {
         <TextInput type="text" onChange={setCountryFilter} placeholder="search country..." aria-label="search country" />
       </div>
       <div style={{ float: "left", width: "30%" }}>
-        <img src="https://www.globsec.org/wp-content/uploads/2020/04/Corona-virus-image.jpg" alt="" style={{ float: "left" }} />
+        <img src="https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_960_720.jpg" alt="" style={{ float: "left" }} />
         <img
           src="https://i.redd.it/q4dgjo77y6n41.jpg"
           alt='When you find out your daily lifestyle is called "quarantine"'
           style={{ float: "left" }}
         />
       </div>
-      <div style={{ float: "right", width: "70%" }}>
         {koronaData !== {} && tableMode && (
-          <pre>
+            <div style={{ float: "right", width: "70%" }}>
             {
               <Tabulka
-                rows={koronaDedToday(koronaData)
-                  .filter((x) => x[0].includes(countryFilter))
-                  .sort(sortFunc)
-                  .slice(page * items - items, page * items)}
+                rows={rady}
                 onSort={onSort}
+                onSelect={onSelect}
+                selected={selectedCountries}
               />
             }
-          </pre>
+            </div>
         )}
-        {koronaData !== {} && !tableMode && <CoronaChart koronky={Object.keys(koronaData).filter((x) => selectedCountries.includes(x)).map((country)=> {return [country, koronaData[country]]})} />}
-      </div>
+
+        {koronaData !== {} && !tableMode && <div style={{ float: "right", width: "70%" , height: "70%"}}><CoronaChart koronky={Object.keys(koronaData).filter((x) => selectedCountries.has(x)).map((country)=> {console.log(koronaData[country]); return [country, koronaData[country]]})} /></div>}
       {user && koronaData !== {} && (
         <Pagination itemCount={Object.keys(koronaData).length} perPage={items} page={page} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
       )}
