@@ -57,7 +57,7 @@ const NavBar = () => {
                 <br />
                 <br />
 
-                {!user["verified"]&&<Alert variant="warning" isInline title="your mail is not verified"/>}
+                {!user["verified"]&&<Alert variant="warning" isInline title="e-mail is not verified!"/>}
                 </div>>
 
               <Avatar src={user.picture} alt="Profile" className="nav-user-profile rounded-circle" width="50" />

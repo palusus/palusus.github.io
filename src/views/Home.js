@@ -5,6 +5,7 @@ import CoronaChart from "../components/CoronaChart";
 import { Pagination, TextInput, Switch, Drawer, Button } from "@patternfly/react-core";
 import Drawik from "../components/Drawer";
 import TimesIcon from "@patternfly/react-icons/dist/js/icons/times-icon";
+import Landing from "../components/Landing";
 const koronaDedToday = (koronky) => {
   return !koronky
     ? []
@@ -28,7 +29,7 @@ const koronaDedToday = (koronky) => {
       });
 };
 const Home = () => {
-  const [ loading, setLoading ] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(1);
   const [page, setPage] = useState(1);
   const [items, setItems] = useState(10);
@@ -37,11 +38,11 @@ const Home = () => {
   const [countryFilter, setCountryFilter] = useState("");
   const [filter, setFilter] = useState({});
   const [x, d] = useState(false);
-  const [tableMode, setTableMode] = useState(true);
   const [selectedCountries, setSelectedCountries] = useState(new Set()); //["Philippines", "Czechia"])); //["Philippines", "Czechia"]); //set
   const [filterOn, setFilterOn] = useState(false);
+  const [view, setView] = useState("home");
 
-  const retarded = !tableMode;
+  const retarded = view === "graph";
 
   const resetSelectedCountries = () => setSelectedCountries(new Set());
   const toggleFilterOn = () => setFilterOn(!filterOn);
@@ -68,15 +69,17 @@ const Home = () => {
 
   const onSelect = (event, isSelected, rowID) => {
     const modify = isSelected ? select : unselect;
+    const action = (id) => {
+      const stat = rady[id][0];
+      modify(stat);
+    };
     if (rowID === -1) {
+      for (let i = 0; ++i; i < rady.length) {
+        setTimeout(() => action(i), 100 * i);
+      }
       return;
     }
-    const stat = rady[rowID][0];
-    modify(stat);
-    rady[rowID].selected = isSelected;
-  };
-  const toggleTableMode = () => {
-    setTableMode(!tableMode);
+    action(rowID);
   };
 
   async function fetchData() {
@@ -130,34 +133,39 @@ const Home = () => {
   const tab = (
     <div>
       {!retarded && (
-          <div style={{ float: "left", width: "28%", margin:"1%"}}>
-            <img src="https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_960_720.jpg" alt="" style={{ float: "left" }} />
-            <img
-                src="https://i.redd.it/q4dgjo77y6n41.jpg"
-                alt='When you find out your daily lifestyle is called "quarantine"'
-                style={{ float: "left" }}
-            />
-          </div>
+        <div style={{ float: "left", width: "28%", margin: "1%" }}>
+          <img src="https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_960_720.jpg" alt="" style={{ float: "left" }} />
+          <img
+            src="https://i.redd.it/q4dgjo77y6n41.jpg"
+            alt='When you find out your daily lifestyle is called "quarantine"'
+            style={{ float: "left" }}
+          />
+        </div>
       )}
       {koronaData !== {} && (
-        <div style={{ float: "right", width: (retarded?"28%":"68%"), margin:"1%" }}>
-
+        <div style={{ float: retarded ? "left" : "right", width: retarded ? "28%" : "68%", margin: "1%" }}>
           <div style={{ float: "right" }}>
             <Pagination itemCount={Object.keys(cele).length} perPage={items} page={paga} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
           </div>
           <div style={{ float: "left" }}>
-            <div style={{float: "left", marginRight:5}}>
-            <Button variant="danger" aria-label="Remove all selections" onClick={resetSelectedCountries}>
-              <input type={"checkbox"} checked={selectedCountries.size !== 0} />
-            </Button>
+            <div style={{ float: "left", marginRight: 5 }}>
+              <Button variant="danger" aria-label="Remove all selections" onClick={resetSelectedCountries}>
+                <input type={"checkbox"} checked={selectedCountries.size !== 0} />
+              </Button>
             </div>
             <Button onClick={toggleFilterOn} variant={"secondary"}>
               {filterOn ? "hide" : "show"} filters
             </Button>
             {filterOn && (
-                <Button onClick={() => { setCountryFilter(""); setFilter({}) } } variant={"danger"}>
-                  reset filters
-                </Button>
+              <Button
+                onClick={() => {
+                  setCountryFilter("");
+                  setFilter({});
+                }}
+                variant={"danger"}
+              >
+                reset filters
+              </Button>
             )}
           </div>
 
@@ -173,14 +181,16 @@ const Home = () => {
             filterOn={filterOn}
             setCountryFilter={setCountryFilter}
           />
-      </div>)}
+        </div>
+      )}
     </div>
   );
 
   const chart = (
     <Fragment>
-      <div style={{ float: "left", width: "68%", height: "70%", margin:"1%"}}>
+      <div style={{ float: "right", width: "68%", height: "70%", margin: "1%" }}>
         <CoronaChart
+            setView={setView}
           koronky={Object.keys(koronaData)
             .filter((x) => selectedCountries.has(x))
             .map((country) => {
@@ -191,16 +201,17 @@ const Home = () => {
       </div>
     </Fragment>
   );
-  return loading ? (
-    ""
-  ) : (
+  return (
     <Fragment>
-      <div style={{ width: "28%", margin:"1%"}}>
+      <div style={{ width: "28%", margin: "1%" }}>
         {/*<Switch id="tableSwitch" label={"Table mode"} labelOff="Graph mode" isChecked={tableMode} onChange={toggleTableMode} />*/}
-        <Button onClick={toggleTableMode}>{tableMode?"Show Graph":"Show Table"}</Button>
+        <Button onClick={() => setView("home")}>Home</Button>
+        <Button onClick={() => setView("table")}>Show Table</Button>
+        <Button onClick={() => setView("graph")}>Show Graph</Button>
       </div>
-      {koronaData !== {} && tableMode && tab}
-      {koronaData !== {} && !tableMode && (
+      {view === "home" && <Landing setView={setView}/>}
+      {!loading && koronaData !== {} && view === "table" && tab}
+      {!loading && koronaData !== {} && view === "graph" && (
         <>
           {tab} {chart}
         </>
