@@ -1,5 +1,10 @@
 import React from "react";
+import { Spinner } from "@patternfly/react-core";
 
-const Loading = () => <div>Loading ...</div>;
+const Loading = () => (
+  <div style={{ float: "right" }}>
+    Profile loading <Spinner size={"lg"}/>
+  </div>
+);
 
 export default Loading;

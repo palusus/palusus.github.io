@@ -46,7 +46,6 @@ const sortable: ITransform = (label: IFormatterValueType, { columnIndex, column,
         className: css(styles.tableSort, isSortedBy && styles.modifiers.selected),
         'aria-sort': isSortedBy ? `${sortBy.direction}ending` : 'none',
         children: (<Fragment>
-                {label}
                 <div style={{float:"left", marginTop:"20px"}}>
                     <ArrowsAltVIcon onClick={sortClicked}></ArrowsAltVIcon>
                 {/*<SortColumn*/}
@@ -57,6 +56,7 @@ const sortable: ITransform = (label: IFormatterValueType, { columnIndex, column,
                 {/*>*/}
                 {/*</SortColumn>*/}
                 </div>
+                {label}
             </Fragment>
         )
     };
@@ -69,25 +69,29 @@ const headerTemplate = [
     {name:"active", explanation:""},
     {name:"weekly", explanation:""},
     {name:"weekly%", explanation:""},
-    {name:"recovered", explanation:""},
-    {name:"koronarip", explanation:""},
+    {name:"survived", explanation:""},
+    {name:"dead", explanation:""},
     {name:"%final", explanation:""},
     ];
-const Tabulka = ({ rows, onSort, onSelect, selected, addFilter, filter, ...other }) => {
+const Tabulka = ({ rows, onSort, onSelect, selected, addFilter, filter, retarded, toggleFilterOn, filterOn, setCountryFilter, ...other }) => {
   const srows =  rows.map((row) => {
-    row.selected = selected.has(row[0]);
-    return row;
+      const wow = retarded?row.slice(0,2):row;
+    wow.selected = selected.has(row[0]);
+    return wow;
   });
+  const header = retarded ? headerTemplate.slice(0,2) : headerTemplate;
+  console.log("filtron",filterOn);
   return (
     <Table
       aria-label="Sortable coronavirus table"
-      cells={headerTemplate.map((x) => {
-          const index = headerTemplate.map((v) => v["name"]).indexOf(x["name"]);
+      cells={header.map((x) => {
+          const index = header.map((v) => v["name"]).indexOf(x["name"]);
           const exists = filter[index];
         return {
           title: (
             <Fragment>
-                <div>
+                <div style={{ marginLeft:"5%", marginRight:"5%", fontFamily:"Courier New"}}><br />{x["name"].padStart(9, ' ')}</div>
+                {index !== 0 && filterOn &&<div hidden={!filterOn}>
                     <div style={{float:"left"}}>
                 <TextInput placeholder={"min "+x["name"]} value={exists&&(filter[index][0])} onChange={(vala) => {console.log(filter);
     addFilter(index, vala, exists?filter[index][1]:undefined)
@@ -98,11 +102,24 @@ const Tabulka = ({ rows, onSort, onSelect, selected, addFilter, filter, ...other
                     addFilter(index, exists?filter[index][0]:undefined, val)
                 }}/>
                     </div>
-                </div>
-                <div style={{float:"left", marginLeft:"10%"}}><br />{x["name"]}</div>
+                </div>}
+                {index===0&&(
+                    <div width={500}>
+                        <div style={{float:"left"}} onClick={toggleFilterOn}>
+                            {filterOn
+                                ?<TextInput isDisabled placeholder={"hide filters"} value={exists&&(filter[index][0])} onChange={setCountryFilter} />
+                                :''
+                            }
+                        </div>
+                        {!filterOn&&<br />}
+                        <div style={{float:"left"}} hidden={!filterOn}>
+                            <TextInput placeholder={"search "+x["name"]} value={exists&&(filter[index][0])} onChange={setCountryFilter} />
+                        </div>
+                    </div>)}
+
             </Fragment>
           ),
-          transforms: [sortable, wrappable]
+          transforms: [sortable]
         };
       })}
       rows={srows}

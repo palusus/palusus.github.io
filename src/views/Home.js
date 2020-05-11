@@ -2,7 +2,9 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useAuth0 } from "../react-auth0-spa";
 import Tabulka from "../components/Tabulka";
 import CoronaChart from "../components/CoronaChart";
-import { Pagination, TextInput, Switch } from "@patternfly/react-core";
+import { Pagination, TextInput, Switch, Drawer, Button } from "@patternfly/react-core";
+import Drawik from "../components/Drawer";
+import TimesIcon from "@patternfly/react-icons/dist/js/icons/times-icon";
 const koronaDedToday = (koronky) => {
   return !koronky
     ? []
@@ -26,7 +28,7 @@ const koronaDedToday = (koronky) => {
       });
 };
 const Home = () => {
-  const { loading, user } = useAuth0();
+  const [ loading, setLoading ] = useState(true);
   const [index, setIndex] = useState(1);
   const [page, setPage] = useState(1);
   const [items, setItems] = useState(10);
@@ -36,7 +38,13 @@ const Home = () => {
   const [filter, setFilter] = useState({});
   const [x, d] = useState(false);
   const [tableMode, setTableMode] = useState(true);
-  const [selectedCountries, setSelectedCountries] = useState(new Set());//["Philippines", "Czechia"])); //["Philippines", "Czechia"]); //set
+  const [selectedCountries, setSelectedCountries] = useState(new Set()); //["Philippines", "Czechia"])); //["Philippines", "Czechia"]); //set
+  const [filterOn, setFilterOn] = useState(false);
+
+  const retarded = !tableMode;
+
+  const resetSelectedCountries = () => setSelectedCountries(new Set());
+  const toggleFilterOn = () => setFilterOn(!filterOn);
 
   const select = (country) => {
     let x = new Set(selectedCountries);
@@ -75,14 +83,13 @@ const Home = () => {
     const res = await fetch("https://pomber.github.io/covid19/timeseries.json");
     console.log("spadne", res);
     res.json().then((res) => setKoronaData(res));
+    setLoading(false);
   }
   // const loading = false;
   // const user = false;
   useEffect(() => {
-    if (!loading) {
-      fetchData();
-    }
-  }, [loading, user]);
+    fetchData();
+  }, []);
   const onSort = (_event, index) => {
     setDirection(-direction);
     setIndex(index);
@@ -103,7 +110,7 @@ const Home = () => {
     Object.keys(filter).map((lol) => {
       const exists = (i) => !(filter[lol][i] === undefined || filter[lol][i] === "");
       [0, 1].map((i) => {
-        if (exists(i) && (i?filter[lol][i] <= x[lol]:filter[lol][i]>= x[lol])) {
+        if (exists(i) && (i ? filter[lol][i] <= x[lol] : filter[lol][i] >= x[lol])) {
           result = false;
         }
       });
@@ -117,48 +124,86 @@ const Home = () => {
     .sort(sortFunc);
   const paga = cele.length < page * items - items ? 1 : page;
   const rady = cele.slice(paga * items - items, paga * items);
-  return (
-    <Fragment>
-      <div style={{ float: "left", width: "30%" }}>
-        <Switch id="tableSwitch" label={"Table mode"} labelOff="Graph mode" isChecked={tableMode} onChange={toggleTableMode} />
-      </div>
-      {koronaData !== {} && console.log("koronky jsou", koronaDedToday(koronaData))}
-      {koronaData !== {} && (
-        <div style={{ float: "right" }}>
-          <Pagination itemCount={Object.keys(cele).length} perPage={items} page={paga} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
-        </div>
-      )}
 
-      <div style={{ float: "bottom", width: "auto" }}>
-        <TextInput type="text" onChange={setCountryFilter} placeholder="search country..." aria-label="search country" />
-      </div>
-      <br />
-      <br />
-      <div style={{ float: "left", width: "30%" }}>
-        <img src="https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_960_720.jpg" alt="" style={{ float: "left" }} />
-        <img
-          src="https://i.redd.it/q4dgjo77y6n41.jpg"
-          alt='When you find out your daily lifestyle is called "quarantine"'
-          style={{ float: "left" }}
+  // const Tab = ({retarded}) =>
+
+  const tab = (
+    <div>
+      {!retarded && (
+          <div style={{ float: "left", width: "28%", margin:"1%"}}>
+            <img src="https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_960_720.jpg" alt="" style={{ float: "left" }} />
+            <img
+                src="https://i.redd.it/q4dgjo77y6n41.jpg"
+                alt='When you find out your daily lifestyle is called "quarantine"'
+                style={{ float: "left" }}
+            />
+          </div>
+      )}
+      {koronaData !== {} && (
+        <div style={{ float: "right", width: (retarded?"28%":"68%"), margin:"1%" }}>
+
+          <div style={{ float: "right" }}>
+            <Pagination itemCount={Object.keys(cele).length} perPage={items} page={paga} onSetPage={onSetPage} onPerPageSelect={onSetPerPage} />
+          </div>
+          <div style={{ float: "left" }}>
+            <div style={{float: "left", marginRight:5}}>
+            <Button variant="danger" aria-label="Remove all selections" onClick={resetSelectedCountries}>
+              <input type={"checkbox"} checked={selectedCountries.size !== 0} />
+            </Button>
+            </div>
+            <Button onClick={toggleFilterOn} variant={"secondary"}>
+              {filterOn ? "hide" : "show"} filters
+            </Button>
+            {filterOn && (
+                <Button onClick={() => { setCountryFilter(""); setFilter({}) } } variant={"danger"}>
+                  reset filters
+                </Button>
+            )}
+          </div>
+
+          <Tabulka
+            rows={rady}
+            onSort={onSort}
+            onSelect={onSelect}
+            selected={selectedCountries}
+            addFilter={addFilter}
+            filter={filter}
+            retarded={retarded}
+            toggleFilterOn={toggleFilterOn}
+            filterOn={filterOn}
+            setCountryFilter={setCountryFilter}
+          />
+      </div>)}
+    </div>
+  );
+
+  const chart = (
+    <Fragment>
+      <div style={{ float: "left", width: "68%", height: "70%", margin:"1%"}}>
+        <CoronaChart
+          koronky={Object.keys(koronaData)
+            .filter((x) => selectedCountries.has(x))
+            .map((country) => {
+              console.log(koronaData[country]);
+              return [country, koronaData[country]];
+            })}
         />
       </div>
-      {koronaData !== {} && tableMode && (
-        <div style={{ float: "right", width: "70%" }}>
-          {<Tabulka rows={rady} onSort={onSort} onSelect={onSelect} selected={selectedCountries} addFilter={addFilter} filter={filter} />}
-        </div>
-      )}
-
+    </Fragment>
+  );
+  return loading ? (
+    ""
+  ) : (
+    <Fragment>
+      <div style={{ width: "28%", margin:"1%"}}>
+        {/*<Switch id="tableSwitch" label={"Table mode"} labelOff="Graph mode" isChecked={tableMode} onChange={toggleTableMode} />*/}
+        <Button onClick={toggleTableMode}>{tableMode?"Show Graph":"Show Table"}</Button>
+      </div>
+      {koronaData !== {} && tableMode && tab}
       {koronaData !== {} && !tableMode && (
-        <div style={{ float: "right", width: "70%", height: "70%" }}>
-          <CoronaChart
-            koronky={Object.keys(koronaData)
-              .filter((x) => selectedCountries.has(x))
-              .map((country) => {
-                console.log(koronaData[country]);
-                return [country, koronaData[country]];
-              })}
-          />
-        </div>
+        <>
+          {tab} {chart}
+        </>
       )}
     </Fragment>
   );
